@@ -15,15 +15,21 @@ camera.exposure_mode = 'auto'
 # verylong, fixedfps, antishake, and fireworks.
 # The default is auto
 
-def preview_image():
+def main(camera):
+    preview_image(camera)
+    return
+
+def preview_image(camera):
 # Code that shows camera preview for 10 sec
     camera.start_preview()
     sleep(10)
     camera.stop_preview()
 
 # Take a photo
-def capture_photo(i)
+def capture_photo(i):
     sleep(5)
     path = "/home/pi/Desktop/img%s.jpg" % i
     camera.capture(path)
     return path
+
+main()
