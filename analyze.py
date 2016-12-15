@@ -5,12 +5,22 @@ from time import sleep
 from PIL import ImageFont
 from PIL import ImageDraw
 
+comp = "mac"
 
-im = Image.open("/Users/maslo/Desktop/img_0101.jpg")
+if comp == "mac":
+    font = "/Library/Fonts/Comic Sans MS.ttf"
+    path = "/Users/maslo/Desktop/projects/light-pollution/"
+    file = "img_0101.jpg"
+else:
+    font = "./DroidSansMono.ttf"
+    path = "/home/pi/Desktop/"
+    file = "img1.jpg"
+
+im = Image.open(path+file)
 im.show()
-
-fnt = ImageFont.truetype("/Library/Fonts/Comic Sans MS.ttf", 72)
 frames = []
+fnt = ImageFont.truetype(font, 72)
+
 gray = im.convert('L')
 for i in range(30,240,50):
     bw = gray.point(lambda x: 0 if x<i else 255, '1')
@@ -23,15 +33,5 @@ for i in range(30,240,50):
     sleep(1)
     frames.append(img)
 
- # write GIF animatio
-# fp = open("~/Desktop/out.gif", "wb")
-# gifmaker.makedelta(fp, frames)
-# fp.close()
 
-# bw = im.convert('RGB')
-# im1 = bw.filter(ImageFilter.FIND_EDGES)
-# im1.show
-#
-# draw = ImageDraw.Draw(img)
-#
-# img.show()
+im.save(path+"test", "JPEG")

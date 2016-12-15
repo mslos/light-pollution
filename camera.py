@@ -1,6 +1,5 @@
 from picamera import PiCamera, Color
 from time import sleep
-
 camera = PiCamera()
 
 # Set up the camera
