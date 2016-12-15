@@ -4,21 +4,37 @@ from PIL import ImageStat
 from time import sleep
 from PIL import ImageFont
 from PIL import ImageDraw
+import sys
+import os
 
-comp = "mac"
+comp = "raspi"
 
 if comp == "mac":
     font = "/Library/Fonts/Comic Sans MS.ttf"
     path = "/Users/maslo/Desktop/projects/light-pollution/"
-    file = "img_0101.jpg"
-else:
+    fl = "img_0101.jpg"
+elif comp == 'raspi':
     font = "./DroidSansMono.ttf"
     path = "/home/pi/Desktop/"
-    file = "img1.jpg"
+    fl = "img1.jpg"
+    from picamera import PiCamera, Color
+    from time import sleep
+    camera = PiCamera()
 
-im = Image.open(path+file)
-im.show()
-frames = []
+def capture_photo_2(path):
+    camera.resolution = (2592, 1944)
+    # camera.resolution = (500,500)
+    sleep(5)
+    camera.capture(path)
+    return path
+
+# Sourcing image
+# im = Image.open(path+fl)
+capture_photo_2(path+fl)
+im = Image.open(path+fl)
+
+# im.show()
+frames = [im]
 fnt = ImageFont.truetype(font, 72)
 
 gray = im.convert('L')
@@ -29,9 +45,31 @@ for i in range(30,240,50):
     draw = ImageDraw.Draw(img)
     draw.text((50, 50), "Min/Max values: "+str(stat.extrema), (0, 255, 0), font=fnt)
     draw.text((50, 130), "Average color (pollution): "+str(stat.mean), (0, 255, 0), font=fnt)
-    img.show()
-    sleep(1)
+    # img.show()
+    # sleep(1)
     frames.append(img)
 
+images = frames
+widths, heights = zip(*(i.size for i in images))
 
-im.save(path+"test", "JPEG")
+total_width = sum(widths)/2
+max_height = max(heights)*2
+
+new_im = Image.new('RGB', (total_width, max_height))
+
+x_offset = 0
+for im in images[0:3]:
+  new_im.paste(im, (x_offset,0))
+  x_offset += im.size[0]
+
+x_offset = 0
+for im in images[3:7]:
+    new_im.paste(im,(x_offset,im.size[1]))
+    x_offset += im.size[0]
+
+
+new_im.save(path+'test2.jpg')
+os.system("xdg-open "+path+'test2.jpg')
+new_im.show()
+
+# im.save(path+"test", "JPEG")

@@ -15,13 +15,13 @@ camera.exposure_mode = 'night'
 
 def main(camera):
     preview_image(camera)
-    capture_photo(1)
+    # capture_photo(1)
     return
 
 def preview_image(camera):
 # Code that shows camera preview for 10 sec
     camera.start_preview()
-    sleep(10)
+    sleep(20)
     camera.stop_preview()
 
 # Take a photo
@@ -31,5 +31,13 @@ def capture_photo(i):
     path = "/home/pi/Desktop/img%s.jpg" % i
     camera.capture(path)
     return path
+
+def capture_photo_2(path):
+    camera.resolution = (2592, 1944)
+    # camera.resolution = (500,500)
+    sleep(5)
+    camera.capture(path)
+    return path
+
 
 main(camera)
