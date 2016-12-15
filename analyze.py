@@ -7,11 +7,14 @@ from PIL import ImageDraw
 import sys
 import os
 
+## Configure for raspi or mac
 comp = "raspi"
+frames = [im]
+fnt = ImageFont.truetype(font, 72)
 
 if comp == "mac":
     font = "/Library/Fonts/Comic Sans MS.ttf"
-    path = "/Users/maslo/Desktop/projects/light-pollution/"
+    path = "/Users/***/Desktop/projects/light-pollution/"
     fl = "img_0101.jpg"
 elif comp == 'raspi':
     font = "./DroidSansMono.ttf"
@@ -21,6 +24,8 @@ elif comp == 'raspi':
     from time import sleep
     camera = PiCamera()
 
+
+## Capture photo in the given path
 def capture_photo_2(path):
     camera.resolution = (2592, 1944)
     # camera.resolution = (500,500)
@@ -28,15 +33,11 @@ def capture_photo_2(path):
     camera.capture(path)
     return path
 
-# Sourcing image
-# im = Image.open(path+fl)
+## Sourcing image
 capture_photo_2(path+fl)
 im = Image.open(path+fl)
 
-# im.show()
-frames = [im]
-fnt = ImageFont.truetype(font, 72)
-
+## Filter out light pollution for each image and calculate quotient
 gray = im.convert('L')
 for i in range(30,240,50):
     bw = gray.point(lambda x: 0 if x<i else 255, '1')
@@ -49,14 +50,17 @@ for i in range(30,240,50):
     # sleep(1)
     frames.append(img)
 
+
+## Prepare the image mixing
 images = frames
 widths, heights = zip(*(i.size for i in images))
-
 total_width = sum(widths)/2
 max_height = max(heights)*2
 
 new_im = Image.new('RGB', (total_width, max_height))
 
+
+## Place filtered images into a single image
 x_offset = 0
 for im in images[0:3]:
   new_im.paste(im, (x_offset,0))
@@ -67,7 +71,7 @@ for im in images[3:7]:
     new_im.paste(im,(x_offset,im.size[1]))
     x_offset += im.size[0]
 
-
+## Saaaave!
 new_im.save(path+'test2.jpg')
 os.system("xdg-open "+path+'test2.jpg')
 new_im.show()
